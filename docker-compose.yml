@@ -29,6 +29,7 @@ services:
             - ./:/var/www/project
         networks:
             - nginx-php74-mysql8-node
+        user: 1000:1000
 
     mysql:
         image: mysql:8
