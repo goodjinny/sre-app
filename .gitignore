@@ -1,5 +1,6 @@
 .idea
 docker/mysql
+docker-compose.override.yaml
 
 ###> symfony/framework-bundle ###
 /.env.local
