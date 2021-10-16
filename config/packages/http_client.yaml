@@ -1,0 +1,10 @@
+# config/packages/framework.yaml
+framework:
+  http_client:
+    max_host_connections: 10
+    default_options:
+      max_redirects: 7
+    scoped_clients:
+      debricked.client:
+        base_uri: '%env(DEBRICKED_API_URL)%'
+        timeout: 3
