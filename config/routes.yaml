@@ -1,3 +1,6 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+api_v10:
+  resource: ../src/Controller/API/V10
+  type: annotation
+  prefix: /api/v1.0
+  host: "%api_host%"
+  schemes: "%api_scheme%"

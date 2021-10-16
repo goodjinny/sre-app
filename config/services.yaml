@@ -4,6 +4,11 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    api_host: '%env(APP_API_HOST)%'
+    api_scheme: '%env(APP_API_SCHEME)%'
+    debricked_username: '%env(DEBRICKED_USERNAME)%'
+    debricked_password: '%env(DEBRICKED_PASSWORD)%'
+    debricked_access_token: '%env(DEBRICKED_ACCESS_TOKEN)%'
 
 services:
     # default configuration for services in *this* file
@@ -21,5 +26,7 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    App\Controller\:
+        resource: '../src/Controller/'
+        tags: ['controller.service_arguments']
+
