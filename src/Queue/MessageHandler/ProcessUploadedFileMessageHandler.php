@@ -49,11 +49,13 @@ final class ProcessUploadedFileMessageHandler implements MessageHandlerInterface
             return;
         }
 
-        $file->setIsProcessed(true);
         $fileUpload->setCiUploadId($response->getCiUploadId());
+        $file->setIsProcessed(true);
 
         $this->em->flush();
         $this->em->refresh($fileUpload);
+
+        $this->fileStorage->removeUploadedFile($file);
 
         if ($fileUpload->allFilesAreProcessed()) {
             $this->debrickedApiClient->concludeFilesUpload($fileUpload->getCiUploadId());

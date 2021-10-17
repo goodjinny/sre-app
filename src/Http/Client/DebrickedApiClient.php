@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Client;
 
 use App\DTO\Debricked\UploadFileResponseDto;
+use App\DTO\Debricked\UploadStatusResponseDto;
 use App\Traits\SerializerTrait;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Part\DataPart;
@@ -29,6 +30,8 @@ final class DebrickedApiClient
     }
 
     /**
+     * Requests supported dependencies files formats
+     *
      * @return array
      */
     public function getSupportedDependencies(): array
@@ -83,7 +86,7 @@ final class DebrickedApiClient
     public function concludeFilesUpload(int $ciUploadId): bool
     {
         $data = [
-            'ciUploadId' => $ciUploadId,
+            'ciUploadId' => (string) $ciUploadId,
         ];
 
         $formData = new FormDataPart($data);
@@ -95,5 +98,25 @@ final class DebrickedApiClient
         );
 
         return Response::HTTP_NO_CONTENT === $response->getStatusCode();
+    }
+
+    /**
+     * Requests upload status for given upload session
+     *
+     * @param int $ciUploadId
+     *
+     * @return UploadStatusResponseDto|null
+     */
+    public function getCiUploadStatus(int $ciUploadId): ?UploadStatusResponseDto
+    {
+        $response = $this->httpClient->request('GET', '1.0/open/ci/upload/status', [
+            'query' => [
+                'ciUploadId' => $ciUploadId
+            ]
+        ]);
+
+        return Response::HTTP_OK === $response->getStatusCode()
+            ? $this->serializer->deserialize($response->getContent(), UploadStatusResponseDto::class, JsonEncoder::FORMAT)
+            : null;
     }
 }

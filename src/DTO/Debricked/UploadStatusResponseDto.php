@@ -9,6 +9,8 @@ namespace App\DTO\Debricked;
  */
 final class UploadStatusResponseDto
 {
+    public const UPLOAD_PROCESSED_PROGRESS_VALUE = 100;
+
     /**
      * @var int
      */
@@ -182,5 +184,13 @@ final class UploadStatusResponseDto
         $this->detailsUrl = $detailsUrl;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUploadProcessed(): bool
+    {
+        return self::UPLOAD_PROCESSED_PROGRESS_VALUE === $this->getProgress();
     }
 }
