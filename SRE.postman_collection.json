@@ -1,0 +1,102 @@
+{
+	"info": {
+		"_postman_id": "7db10351-d216-4120-b794-eef31bb660ae",
+		"name": "SRE",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Upload new file",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c6b36d99-056a-4ceb-acdb-a6a7399c8bc4",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set(\"uploadId\", jsonData.uploadId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "files[]",
+							"type": "file",
+							"src": [
+								"/home/alexkad/Downloads/hometask/composer.lock",
+								"/home/alexkad/Downloads/hometask/empty_dependency_file.unknown_format",
+								"/home/alexkad/Downloads/hometask/yarn.lock"
+							]
+						},
+						{
+							"key": "repositoryName",
+							"value": "symfony_docker",
+							"type": "text"
+						},
+						{
+							"key": "commitName",
+							"value": "5c8f40d69aad2dff29c433ce41d0260559e12163",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1.0/files",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1.0",
+						"files"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get upload status",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1.0/files/upload/{{uploadId}}/status",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1.0",
+						"files",
+						"upload",
+						"{{uploadId}}",
+						"status"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
