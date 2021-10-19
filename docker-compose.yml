@@ -52,3 +52,11 @@ services:
             - ./docker/mysql:/var/lib/mysql
         networks:
             - sre-app-network
+
+    redis:
+        image: redis:alpine
+        container_name: sre-redis
+        ports:
+            - "6379:6379"
+        networks:
+            - sre-app-network
