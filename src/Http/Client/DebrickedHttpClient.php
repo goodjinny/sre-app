@@ -120,7 +120,7 @@ final class DebrickedHttpClient implements HttpClientInterface
     }
 
     /**
-     * Refreshes JWT token with debricked access token and saves it to session
+     * Refreshes JWT token with debricked access-token and saves it to session
      */
     private function refreshTokenWithAccessToken(): void
     {

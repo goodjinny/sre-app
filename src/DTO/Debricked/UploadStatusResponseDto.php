@@ -17,14 +17,14 @@ final class UploadStatusResponseDto
     private int $progress;
 
     /**
-     * @var bool
+     * @var int
      */
-    private bool $vulnerabilitiesFound;
+    private int $vulnerabilitiesFound;
 
     /**
-     * @var bool
+     * @var int
      */
-    private bool $unaffectedVulnerabilitiesFound;
+    private int $unaffectedVulnerabilitiesFound;
 
     /**
      * @var string
@@ -67,19 +67,19 @@ final class UploadStatusResponseDto
     }
 
     /**
-     * @return bool
+     * @return int
      */
-    public function isVulnerabilitiesFound(): bool
+    public function isVulnerabilitiesFound(): int
     {
         return $this->vulnerabilitiesFound;
     }
 
     /**
-     * @param bool $vulnerabilitiesFound
+     * @param int $vulnerabilitiesFound
      *
      * @return self
      */
-    public function setVulnerabilitiesFound(bool $vulnerabilitiesFound): self
+    public function setVulnerabilitiesFound(int $vulnerabilitiesFound): self
     {
         $this->vulnerabilitiesFound = $vulnerabilitiesFound;
 
@@ -87,19 +87,19 @@ final class UploadStatusResponseDto
     }
 
     /**
-     * @return bool
+     * @return int
      */
-    public function isUnaffectedVulnerabilitiesFound(): bool
+    public function isUnaffectedVulnerabilitiesFound(): int
     {
         return $this->unaffectedVulnerabilitiesFound;
     }
 
     /**
-     * @param bool $unaffectedVulnerabilitiesFound
+     * @param int $unaffectedVulnerabilitiesFound
      *
      * @return self
      */
-    public function setUnaffectedVulnerabilitiesFound(bool $unaffectedVulnerabilitiesFound): self
+    public function setUnaffectedVulnerabilitiesFound(int $unaffectedVulnerabilitiesFound): self
     {
         $this->unaffectedVulnerabilitiesFound = $unaffectedVulnerabilitiesFound;
 
