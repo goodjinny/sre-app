@@ -19,11 +19,12 @@ services:
         networks:
             - sre-app-network
 
-    php:
+    php: &default-app
         build:
             context: .
             dockerfile: ./docker/php/Dockerfile
         container_name: sre-php
+        restart: always
         ports:
             - "9000:9000"
         environment:
@@ -33,9 +34,26 @@ services:
             - ./:/var/www/app
             - ./docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
             - ./docker/php/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
+        depends_on:
+            - db
+            - redis
         networks:
             - sre-app-network
         user: 1000:1000
+
+    queue:
+        <<: *default-app
+        build:
+            context: .
+            dockerfile: ./docker/queue/Dockerfile
+        container_name: sre-queue
+        volumes:
+            - ./:/var/www/app
+            - ./docker/scripts:/var/www/scripts
+        ports:
+            - "9001:9000"
+        depends_on:
+            - php
 
     db:
         image: mysql:8
