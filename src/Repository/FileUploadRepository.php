@@ -30,4 +30,16 @@ class FileUploadRepository extends ServiceEntityRepository
             'hash' => $hashId
         ]);
     }
+
+    /**
+     * @return array|FileUpload[]
+     */
+    public function getUncompletedUploads(): array
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.ciUploadId IS NULL')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

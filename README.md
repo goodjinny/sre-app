@@ -3,8 +3,8 @@
 Provides an API for interaction with [Debricked](https://debricked.com/). 
 
 ## Installation
-1. ``docker-compose up -d``
-   
+1. ``docker-compose up -d`` 
+
 ## Using
 1. Set [Debricked credentials](https://debricked.com/docs/integrations/api.html#introduction) in ``.env.local`` configuration file
 2. Run [Postman](https://www.postman.com/) and import [SRE Collection](./SRE.postman_collection.json) to it
@@ -13,7 +13,6 @@ Provides an API for interaction with [Debricked](https://debricked.com/).
 5. Run ``Get upload status`` query for getting a result of previous upload processing
 
 ## Backlog
-- create **CheckFilesUpload** command for checking of not uploaded files (to conclude fileUpload sessions)   
 - setup running **CheckFilesUpload** command via crontab
 - create **GetUploadStatus** command and run it via crontab  
 - create **SendNotification** queue message/handler to notify a user about found vulnerabilities (in **GetUploadStatus** command)
