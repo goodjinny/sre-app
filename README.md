@@ -4,7 +4,6 @@ Provides an API for interaction with [Debricked](https://debricked.com/).
 
 ## Installation
 1. ``docker-compose up -d``
-2. ``docker-compose exec php bin/console doctrine:schema:create``
    
 ## Using
 1. Set [Debricked credentials](https://debricked.com/docs/integrations/api.html#introduction) in ``.env.local`` configuration file

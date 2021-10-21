@@ -49,6 +49,7 @@ services:
         container_name: sre-queue
         volumes:
             - ./:/var/www/app
+            - ./docker/mysql:/var/lib/mysql
             - ./docker/scripts:/var/www/scripts
         ports:
             - "9001:9000"
