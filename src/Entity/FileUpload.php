@@ -171,7 +171,7 @@ class FileUpload implements TimestampableInterface
     }
 
     /**
-     * @return Collection
+     * @return Collection|File[]
      */
     public function getFiles()
     {

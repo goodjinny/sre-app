@@ -4,35 +4,27 @@ declare(strict_types=1);
 
 namespace App\EventListener\File;
 
-use App\Event\File\NewFileUploadedEvent;
+use App\Event\File\NewFileUploadEvent;
 use App\Queue\Message\ProcessUploadedFileMessage;
+use App\Traits\MessageBusTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 final class FileEventsSubscriber implements EventSubscriberInterface
 {
-    private MessageBusInterface $messageBus;
-
-    /**
-     * @param MessageBusInterface $messageBus
-     */
-    public function __construct(MessageBusInterface $messageBus)
-    {
-        $this->messageBus = $messageBus;
-    }
+    use MessageBusTrait;
 
     /**
      * @return iterable
      */
     public static function getSubscribedEvents(): iterable
     {
-        yield NewFileUploadedEvent::class => 'onNewFileUploaded';
+        yield NewFileUploadEvent::class => 'onNewFileUpload';
     }
 
     /**
-     * @param NewFileUploadedEvent $event
+     * @param NewFileUploadEvent $event
      */
-    public function onNewFileUploaded(NewFileUploadedEvent $event): void
+    public function onNewFileUpload(NewFileUploadEvent $event): void
     {
         foreach ($event->getFiles() as $file) {
             $this->messageBus->dispatch(new ProcessUploadedFileMessage($file->getId()));

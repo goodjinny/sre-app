@@ -6,7 +6,7 @@ namespace App\Controller\API\V10;
 
 use App\Entity\File;
 use App\Entity\FileUpload;
-use App\Event\File\NewFileUploadedEvent;
+use App\Event\File\NewFileUploadEvent;
 use App\Service\FileStorageService;
 use App\Traits\EntityManagerTrait;
 use App\Traits\EventDispatcherTrait;
@@ -54,7 +54,7 @@ final class UploadNewFileAction
         $this->em->persist($fileUpload);
         $this->em->flush();
 
-        $this->eventDispatcher->dispatch(new NewFileUploadedEvent($fileEntities));
+        $this->eventDispatcher->dispatch(new NewFileUploadEvent($fileEntities));
 
         return new JsonResponse([
             'uploadId' => $fileUpload->getHash()

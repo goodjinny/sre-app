@@ -10,7 +10,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 /**
  * NewFileUploadedEvent.
  */
-final class NewFileUploadedEvent extends Event
+final class NewFileUploadEvent extends Event
 {
     /**
      * @var File[]|array
