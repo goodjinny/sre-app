@@ -13,7 +13,6 @@ Provides an API for interaction with [Debricked](https://debricked.com/).
 5. Run ``Get upload status`` query for getting a result of previous upload processing
 
 ## Backlog
-- create **RedisSession** service and use it to store JWT tokens (for running queue messages asynchronously in CLI)
 - create **CheckFilesUpload** command for checking of not uploaded files (to conclude fileUpload sessions)   
 - setup running **CheckFilesUpload** command via crontab
 - create **GetUploadStatus** command and run it via crontab  

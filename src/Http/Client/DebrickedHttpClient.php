@@ -5,14 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Client;
 
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Mime\Part\Multipart\FormDataPart;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 use Symfony\Contracts\HttpClient\ResponseStreamInterface;
@@ -22,22 +18,23 @@ use Symfony\Contracts\HttpClient\ResponseStreamInterface;
  */
 final class DebrickedHttpClient implements HttpClientInterface
 {
-    private const SESSION_JWT_TOKEN = 'jwtToken';
+    private const CACHE_KEY_JWT_TOKEN = 'jwt_token';
+    private const CACHE_KEY_IS_AUTHORIZED = 'is_authorized';
 
     private HttpClientInterface $debrickedClient;
     private ParameterBagInterface $parameterBag;
-    private SessionInterface $session;
+    private CacheInterface $cache;
 
     /**
      * @param HttpClientInterface $debrickedClient
      * @param ParameterBagInterface $parameterBag
-     * @param RequestStack $requestStack
+     * @param CacheInterface $cache
      */
-    public function __construct(HttpClientInterface $debrickedClient, ParameterBagInterface $parameterBag, RequestStack $requestStack)
+    public function __construct(HttpClientInterface $debrickedClient, ParameterBagInterface $parameterBag, CacheInterface $cache)
     {
         $this->debrickedClient = $debrickedClient;
         $this->parameterBag = $parameterBag;
-        $this->session = $requestStack->getSession();
+        $this->cache = $cache;
     }
 
     /**
@@ -45,13 +42,7 @@ final class DebrickedHttpClient implements HttpClientInterface
      */
     public function request(string $method, string $url, array $options = []): ResponseInterface
     {
-        $response = $this->debrickedClient->request($method, $url, array_merge($options, ['auth_bearer' => $this->session->get(self::SESSION_JWT_TOKEN)]));
-
-        if (Response::HTTP_UNAUTHORIZED === $response->getStatusCode()) {
-            return $this->makeAuthorizedRequest($method, $url, $options);
-        }
-
-        return $response;
+        return $this->debrickedClient->request($method, $url, array_merge($options, ['auth_bearer' => $this->getJwtToken()]));
     }
 
     /**
@@ -74,31 +65,11 @@ final class DebrickedHttpClient implements HttpClientInterface
     }
 
     /**
-     * @param string $method
-     * @param string $url
-     * @param array $options
+     * Obtains JWT token with debricked account credentials
      *
-     * @return ResponseInterface
-     *
-     * @throws TransportExceptionInterface
-     * @throws ClientExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
+     * @return string|null
      */
-    private function makeAuthorizedRequest(string $method, string $url, array $options): ResponseInterface
-    {
-        $this->session->get(self::SESSION_JWT_TOKEN)
-            ? $this->refreshTokenWithAccessToken()
-            : $this->obtainTokenWithAccountCredentials()
-        ;
-
-        return $this->debrickedClient->request($method, $url, array_merge($options, ['auth_bearer' => $this->session->get(self::SESSION_JWT_TOKEN)]));
-    }
-
-    /**
-     * Obtains JWT token with debricked account credentials and saves it to session
-     */
-    private function obtainTokenWithAccountCredentials(): void
+    private function obtainTokenWithAccountCredentials(): ?string
     {
         $data = [
             '_username' => $this->parameterBag->get('debricked_username'),
@@ -115,14 +86,19 @@ final class DebrickedHttpClient implements HttpClientInterface
 
         if (Response::HTTP_OK === $response->getStatusCode()) {
             $tokens = $response->toArray();
-            $this->session->set(self::SESSION_JWT_TOKEN, $tokens['token']);
+
+            return $tokens['token'];
         }
+
+        return null;
     }
 
     /**
-     * Refreshes JWT token with debricked access-token and saves it to session
+     * Refreshes JWT token with debricked access-token
+     *
+     * @return string|null
      */
-    private function refreshTokenWithAccessToken(): void
+    private function refreshTokenWithAccessToken(): ?string
     {
         $data = [
             'refresh_token' => $this->parameterBag->get('debricked_access_token'),
@@ -138,7 +114,37 @@ final class DebrickedHttpClient implements HttpClientInterface
 
         if (Response::HTTP_OK === $response->getStatusCode()) {
             $tokens = $response->toArray();
-            $this->session->set(self::SESSION_JWT_TOKEN, $tokens['token']);
+
+            return $tokens['token'];
         }
+
+        return null;
+    }
+
+    /**
+     * Returns cached JWT token. If token doesn't exist, obtains token with authorization/refresh requests
+     *
+     * @return string
+     */
+    private function getJwtToken(): string
+    {
+        return $this->cache->get(self::CACHE_KEY_JWT_TOKEN, function (ItemInterface $item) {
+            $item->expiresAfter(3600);
+
+            $isAuthorizedItem = $this->cache->getItem(self::CACHE_KEY_IS_AUTHORIZED);
+
+            if ($isAuthorizedItem->isHit()) {
+                return $this->refreshTokenWithAccessToken();
+            }
+
+            $token = $this->obtainTokenWithAccountCredentials();
+
+            if (null !== $token) {
+                $isAuthorizedItem->set(true);
+                $this->cache->save($isAuthorizedItem);
+            }
+
+            return $token;
+        });
     }
 }

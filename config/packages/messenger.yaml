@@ -7,5 +7,5 @@ framework:
 
         routing:
             #todo: http-sessions doesn't work under cli. Install redis and use redis session to handle messages with async transport
-            #'App\Queue\Message\AsyncMessageInterface': async
-            'App\Queue\Message\ProcessUploadedFileMessage': sync
+            'App\Queue\Message\AsyncMessageInterface': async
+            #'App\Queue\Message\ProcessUploadedFileMessage': sync
