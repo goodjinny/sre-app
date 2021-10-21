@@ -35,6 +35,8 @@ class CheckFileUploadsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
+        $io->comment('Checking for uncompleted uploads...');
+
         /** @var FileUpload[] $uncompletedUploads */
         $uncompletedUploads = $this->fileUploadRepository->getUncompletedUploads();
 
@@ -44,17 +46,19 @@ class CheckFileUploadsCommand extends Command
             return Command::SUCCESS;
         }
 
+        $io->info(sprintf('%d uncompleted uploads found.', count($uncompletedUploads)));
+
         foreach ($uncompletedUploads as $upload) {
             foreach ($upload->getFiles() as $file) {
                 if ($file->isProcessed()) {
                     continue;
                 }
                 $this->messageBus->dispatch(new ProcessUploadedFileMessage($file->getId()));
-                $io->info(sprintf('File "%s" for upload #%d was resend to debricked', $file->getFileName(), $upload->getId()));
+                $io->info(sprintf('File "%s" for upload (id=%d) have been resent to Debricked', $file->getFileName(), $upload->getId()));
             }
         }
 
-        $io->success('All uncompleted uploads have been resend to Debricked!');
+        $io->success('All uncompleted uploads have been processed!');
 
         return Command::SUCCESS;
     }
