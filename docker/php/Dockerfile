@@ -1,8 +1,8 @@
 FROM php:8.0-fpm
 
-RUN apt-get update && apt-get install -y zlib1g-dev g++ git libicu-dev zip libzip-dev zip
+RUN apt-get update && apt-get install -y zlib1g-dev g++ git libicu-dev zip libzip-dev zip libxslt-dev
 
-RUN docker-php-ext-install intl opcache pdo pdo_mysql \
+RUN docker-php-ext-install intl opcache pdo pdo_mysql xsl\
     && pecl install xdebug apcu redis\
     && docker-php-ext-enable xdebug \
     && docker-php-ext-enable redis \

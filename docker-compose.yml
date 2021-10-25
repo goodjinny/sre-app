@@ -72,6 +72,13 @@ services:
         networks:
             - sre-app-network
 
+    mailcatcher:
+        restart: on-failure
+        image: jeanberu/mailcatcher
+        ports:
+            - "1080:1080"
+            - "1025:1025"
+
     redis:
         image: redis:alpine
         container_name: sre-redis
