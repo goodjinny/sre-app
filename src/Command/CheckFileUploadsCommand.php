@@ -14,7 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:file-upload:check',
-    description: 'Checks file upload sessions for not uploaded files and try to upload them',
+    description: 'Checks file upload sessions for not uploaded files and tries to upload them',
 )]
 class CheckFileUploadsCommand extends Command
 {
@@ -54,7 +54,7 @@ class CheckFileUploadsCommand extends Command
                     continue;
                 }
                 $this->messageBus->dispatch(new ProcessUploadedFileMessage($file->getId()));
-                $io->info(sprintf('File "%s" for upload (id=%d) have been resent to Debricked', $file->getFileName(), $upload->getId()));
+                $io->info(sprintf('File "%s" for upload (id:%d) have been resent to Debricked', $file->getFileName(), $upload->getId()));
             }
         }
 

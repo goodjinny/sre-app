@@ -42,4 +42,16 @@ class FileUploadRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    /**
+     * @return array|FileUpload[]
+     */
+    public function getUnprocessedUploads(): array
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.isProcessed = false')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }
