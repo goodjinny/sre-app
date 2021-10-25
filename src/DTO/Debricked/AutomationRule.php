@@ -9,6 +9,8 @@ namespace App\DTO\Debricked;
  */
 final class AutomationRule
 {
+    public const RULE_ACTION_SEND_EMAIL = 'sendEmail';
+
     /**
      * @var string
      */
@@ -157,5 +159,15 @@ final class AutomationRule
         $this->triggerEvents = $triggerEvents;
 
         return $this;
+    }
+
+    /**
+     * @param string $ruleAction
+     *
+     * @return bool
+     */
+    public function containsRuleAction(string $ruleAction): bool
+    {
+        return in_array($ruleAction, $this->getRuleActions(), true);
     }
 }

@@ -2,4 +2,4 @@ framework:
     mailer:
         dsn: '%env(MAILER_DSN)%'
         envelope:
-            sender: 'notifications@sre.app'
+            sender: 'noreply@sre.app'

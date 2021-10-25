@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Client;
 
+use App\DTO\Debricked\DebrickedUserDto;
 use App\DTO\Debricked\UploadFileResponseDto;
 use App\DTO\Debricked\UploadStatusResponseDto;
 use App\Traits\SerializerTrait;
@@ -117,6 +118,20 @@ final class DebrickedApiClient
 
         return Response::HTTP_OK === $response->getStatusCode()
             ? $this->serializer->deserialize($response->getContent(), UploadStatusResponseDto::class, JsonEncoder::FORMAT)
+            : null;
+    }
+
+    /**
+     * Requests current user information
+     *
+     * @return DebrickedUserDto|null
+     */
+    public function getDebrickedUserInfo(): ?DebrickedUserDto
+    {
+        $response = $this->httpClient->request('GET', '1.0/open/zapier/user');
+
+        return Response::HTTP_OK === $response->getStatusCode()
+            ? $this->serializer->deserialize($response->getContent(), DebrickedUserDto::class, JsonEncoder::FORMAT)
             : null;
     }
 }

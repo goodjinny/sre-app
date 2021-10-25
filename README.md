@@ -17,9 +17,9 @@ Provides an API for interaction with [Debricked](https://debricked.com/).
 5. Goto [http://localhost:1080](http://localhost:1080) and wait for a message with your upload processing result 
 
 ## Backlog
-- create **SendNotification** queue message/handler to notify a user about found vulnerabilities (in **GetUploadStatus** command)
-- add validation for [UploadNewFile](./src/Controller/API/V10/UploadNewFileAction.php) endpoint
+- add validation for [UploadNewFile](./src/Controller/API/V10/UploadNewFileAction.php) endpoint (in accordance to supported files)
 - create API docs for [application endpoints](./src/Controller/API/V10/)
+- add unit tests
 
 
  

@@ -37,6 +37,7 @@ services:
         depends_on:
             - db
             - redis
+            - mailcatcher
         networks:
             - sre-app-network
         user: 1000:1000
@@ -73,11 +74,14 @@ services:
             - sre-app-network
 
     mailcatcher:
+        image: schickling/mailcatcher
+        container_name: sre-mailcatcher
         restart: on-failure
-        image: jeanberu/mailcatcher
         ports:
             - "1080:1080"
             - "1025:1025"
+        networks:
+            - sre-app-network
 
     redis:
         image: redis:alpine

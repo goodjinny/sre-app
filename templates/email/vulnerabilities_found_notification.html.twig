@@ -1,0 +1,32 @@
+{% extends "email/notification.html.twig" %}
+
+{% block content %}
+    <p>A recent scan of the repository {{ repository_name }} caused the following rule to trigger:</p>
+    <div>
+        <p style="background-color: lightgray;padding: 5px;">
+            {{ rule_description }}
+        </p>
+    </div>
+    <p>
+        The rule was triggered for the following vulnerabilities:
+    </p>
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
+        <tbody>
+        <tr>
+            <th>Vulnerability</th>
+            <th>Dependencies</th>
+            <th>CVSS2</th>
+            <th>CVSS3</th>
+        </tr>
+        {% for vt in vulnerabilities %}
+        <tr class="align-center">
+            <td><a href="{{ vt.cveLink }}" class="simple-link" target="_blank">{{ vt.cve }}</a></td>
+            <td><a href="{{ vt.dependencyLink }}">{{ vt.dependency }}</a></td>
+            <td>{{ vt.cvss2 ?: 'N/A' }}</td>
+            <td>{{ vt.cvss3 ?: 'N/A' }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <p class="align-center"><a href="{{ details_url }}" target="_blank" class="button">View details</a></p>
+{% endblock %}

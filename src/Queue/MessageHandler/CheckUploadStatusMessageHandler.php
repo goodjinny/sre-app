@@ -6,8 +6,10 @@ namespace App\Queue\MessageHandler;
 
 use App\Http\Client\DebrickedApiClient;
 use App\Queue\Message\CheckUploadStatusMessage;
+use App\Queue\Message\FileUploadProcessedMessage;
 use App\Repository\FileUploadRepository;
 use App\Traits\EntityManagerTrait;
+use App\Traits\MessageBusTrait;
 use App\Traits\SerializerTrait;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -16,6 +18,7 @@ final class CheckUploadStatusMessageHandler implements MessageHandlerInterface
 {
     use SerializerTrait;
     use EntityManagerTrait;
+    use MessageBusTrait;
 
     private FileUploadRepository $fileUploadRepository;
     private DebrickedApiClient $apiClient;
@@ -51,5 +54,7 @@ final class CheckUploadStatusMessageHandler implements MessageHandlerInterface
         $fileUpload->setStatus($this->serializer->normalize($response, JsonEncoder::FORMAT));
 
         $this->em->flush();
+
+        $this->messageBus->dispatch(new FileUploadProcessedMessage($fileUpload->getHash()));
     }
 }

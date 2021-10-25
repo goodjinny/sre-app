@@ -69,7 +69,7 @@ final class UploadStatusResponseDto
     /**
      * @return int
      */
-    public function isVulnerabilitiesFound(): int
+    public function getVulnerabilitiesFound(): int
     {
         return $this->vulnerabilitiesFound;
     }
@@ -87,9 +87,17 @@ final class UploadStatusResponseDto
     }
 
     /**
+     * @return bool
+     */
+    public function isVulnerabilitiesFound(): bool
+    {
+        return $this->vulnerabilitiesFound > 0;
+    }
+
+    /**
      * @return int
      */
-    public function isUnaffectedVulnerabilitiesFound(): int
+    public function getUnaffectedVulnerabilitiesFound(): int
     {
         return $this->unaffectedVulnerabilitiesFound;
     }
@@ -192,5 +200,45 @@ final class UploadStatusResponseDto
     public function isUploadProcessed(): bool
     {
         return self::UPLOAD_PROCESSED_PROGRESS_VALUE === $this->getProgress();
+    }
+
+    /**
+     * Returns an array with all found vulnerabilities
+     *
+     * @return array|TriggerEvent[]
+     */
+    public function getAllFoundVulnerabilities(): array
+    {
+        $data = [];
+
+        foreach ($this->getAutomationRules() as $automationRule) {
+            if (!$automationRule->isHasCves()) {
+                continue;
+            }
+
+            foreach ($automationRule->getTriggerEvents() as $triggerEvent) {
+                $data[$triggerEvent->getCve()] = $triggerEvent;
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Returns all actions contains 'sendEmail' rule action type
+     *
+     * @return array|AutomationRule[]
+     */
+    public function getSendEmailActions(): array
+    {
+        $data = [];
+
+        foreach ($this->getAutomationRules() as $automationRule) {
+            if ($automationRule->containsRuleAction(AutomationRule::RULE_ACTION_SEND_EMAIL)) {
+                $data[] = $automationRule;
+            }
+        }
+
+        return $data;
     }
 }
