@@ -14,7 +14,7 @@ Provides an API for interaction with [Debricked](https://debricked.com/).
 2. Run [Postman](https://www.postman.com/) and import [SRE Collection](./SRE.postman_collection.json) to it
 3. Change ``files``, ``repositoryName`` and ``commitName`` parameters in Postman ``Upload new file`` query according to your settings.
 4. Run ``Upload new file`` query and obtain an ``uploadId`` as a query result
-5. Your upload will be processed by application
+5. Goto [http://localhost:1080](http://localhost:1080) and wait for a message with your upload processing result 
 
 ## Backlog
 - create **SendNotification** queue message/handler to notify a user about found vulnerabilities (in **GetUploadStatus** command)
